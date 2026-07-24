@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken } from '../utils/generateToken.js';
 
 /**
@@ -36,14 +37,21 @@ const registerUser = async (req, res) => {
       });
     }
 
+    //Generate Salt
+    const salt = await bcrypt.genSalt(10);
+
+    //hash password
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     // Create user (password will be hashed via pre-save hook in User model)
     const user = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword,
       phone: phone || '',
       profileImage: profileImage || '',
     });
+
 
     if (user) {
       const accessToken = generateAccessToken(user._id, user.role);
@@ -79,6 +87,7 @@ const registerUser = async (req, res) => {
       message: error.message || 'Server error during user registration',
     });
   }
+
 };
 
 /**
@@ -86,6 +95,7 @@ const registerUser = async (req, res) => {
  * @route   POST /api/users/login
  * @access  Public
  */
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -101,7 +111,8 @@ const loginUser = async (req, res) => {
     // Explicitly select password field since schema sets select: false
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
-    if (user && (await user.matchPassword(password))) {
+
+    if (user && (await bcrypt.compare(password, user.password))) {
       const accessToken = generateAccessToken(user._id, user.role);
       const refreshToken = generateRefreshToken(user._id);
 
