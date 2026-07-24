@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Address from '../models/addressModel.js';
+import Address from '../models/address.js';
 
 /**
  * @desc    Create a new address for the logged-in user
