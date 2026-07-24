@@ -98,6 +98,16 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+
+/**
+ * Instance method to compare entered password with hashed password in database.
+ * @param {string} enteredPassword - Password provided by user during login
+ * @returns {Promise<boolean>} True if matching, false otherwise
+ */
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
 const User = mongoose.model('User', userSchema);
 
 export default User;
