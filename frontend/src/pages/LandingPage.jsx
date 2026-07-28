@@ -2,50 +2,12 @@ import React, { useState } from 'react';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
 import { ServicesSection } from '../components/ServicesSection';
-<<<<<<< HEAD
-import { FeaturesSection } from '../components/FeaturesSection';
-import { StorySection } from '../components/StorySection';
-import { FeaturedProducts } from '../components/FeaturedProducts';
-import { NewsletterSection } from '../components/NewsletterSection';
-import { Footer } from '../components/Footer';
 
-export const LandingPage = () => {
-  const [cartCount, setCartCount] = useState(3);
-  const [wishlistCount, setWishlistCount] = useState(2);
-
-  const handleAddToCart = () => {
-    setCartCount(prev => prev + 1);
-  };
-
-  return (
-    <div className="min-h-screen bg-cream text-earth flex flex-col font-sans selection:bg-beige selection:text-earth">
-      {/* Top Navbar */}
-      <Navbar 
-        cartCount={cartCount}
-        wishlistCount={wishlistCount}
-      />
-
-      {/* Main Content Sections */}
-      <main className="flex-1">
-        <HeroSection />
-        <ServicesSection />
-        <FeaturesSection />
-        <StorySection />
-        <FeaturedProducts onAddToCart={handleAddToCart} />
-        <NewsletterSection />
-      </main>
-
-      {/* Footer */}
-      <Footer />
-    </div>
-  );
-};
-
-export default LandingPage;
-=======
 import { CollectionSection } from '../components/CollectionSection';
 import { AboutSection } from '../components/AboutSection';
 import { CTASection } from '../components/CTASection';
+
+
 import { Footer } from '../components/Footer';
 import { X, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -79,6 +41,8 @@ export const LandingPage = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [wishlistCount, setWishlistCount] = useState(2);
+
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const cartSubtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -95,13 +59,28 @@ export const LandingPage = () => {
     }, 3000);
   };
 
+  const handleAddToCart = () => {
+    setNotification('items added to cart');
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  }
+
+  const handlecheckout = () => {
+    setIsCartOpen(false);
+    showToast('Checkout initiated');
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  }
+
   const handleSelectCollection = (collectionName) => {
     showToast(`Exploring ${collectionName} collection!`);
   };
 
   return (
     <div className="min-h-screen bg-cream text-charcoal font-sans flex flex-col selection:bg-beige selection:text-mocha">
-      
+
       {/* Toast Notification Banner */}
       {notification && (
         <div className="fixed bottom-6 right-6 z-50 bg-mocha text-cream px-5 py-3 rounded-2xl shadow-2xl border border-beige/40 flex items-center space-x-3 animate-in slide-in-from-bottom-5 duration-300">
@@ -111,8 +90,9 @@ export const LandingPage = () => {
       )}
 
       {/* 1. Navbar */}
-      <Navbar 
-        cartCount={cartCount} 
+      <Navbar
+        cartCount={cartCount}
+        wishlistCount={wishlistCount}
         onOpenCart={() => setIsCartOpen(true)}
       />
 
@@ -140,12 +120,12 @@ export const LandingPage = () => {
       {/* Interactive Cart Drawer */}
       {isCartOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          <div 
-            className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm transition-opacity" 
-            onClick={() => setIsCartOpen(false)} 
+          <div
+            className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsCartOpen(false)}
           />
           <div className="relative z-50 w-full max-w-md h-full bg-cream p-6 shadow-2xl flex flex-col justify-between border-l border-beige/40">
-            
+
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-beige/40">
               <div className="flex items-center space-x-2">
@@ -155,7 +135,7 @@ export const LandingPage = () => {
                   {cartCount} items
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => setIsCartOpen(false)}
                 className="p-2 text-mocha hover:text-sage rounded-full"
               >
@@ -179,7 +159,7 @@ export const LandingPage = () => {
                       <p className="text-xs text-charcoal/60">Qty: {item.quantity}</p>
                       <p className="text-sm font-semibold text-sage-dark">${item.price.toFixed(2)}</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => handleRemoveFromCart(item.id)}
                       className="p-1.5 text-charcoal/40 hover:text-red-600 transition-colors"
                       title="Remove item"
@@ -198,7 +178,7 @@ export const LandingPage = () => {
                 <span>${cartSubtotal.toFixed(2)}</span>
               </div>
               <p className="text-xs text-charcoal/60">Taxes and shipping calculated at checkout.</p>
-              <Button variant="default" className="w-full justify-center shadow-lg" onClick={() => alert("Proceeding to checkout...")}>
+              <Button variant="default" className="w-full justify-center shadow-lg" onClick={handlecheckout}>
                 <span>Checkout Now</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -211,4 +191,4 @@ export const LandingPage = () => {
     </div>
   );
 };
->>>>>>> bbcd3489f6d0c19ebc258fd1e7c0aa79580e6481
+

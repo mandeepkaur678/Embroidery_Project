@@ -3,16 +3,17 @@
 @tailwind utilities;
 
 @layer base {
-<<<<<<< HEAD
+
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     background-color: #F8F6F0;
     color: #2E2823;
     overflow-x: hidden;
   }
+
 }
 
 /* Custom Embroidery Stitch Divider Line */
@@ -30,16 +31,19 @@
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #F8F6F0;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #E7D8C1;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #6B8E6E;
-=======
+
   :root {
     --color-mocha: #6B4F3A;
     --color-beige: #D8B88C;
@@ -54,7 +58,11 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
-  h1, h2, h3, h4, .font-serif-title {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-serif-title {
     font-family: 'Playfair Display', serif;
   }
 }
@@ -74,8 +82,8 @@
 
 .subtle-grid-bg {
   background-size: 24px 24px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(216, 184, 140, 0.15) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(216, 184, 140, 0.15) 1px, transparent 1px);
->>>>>>> bbcd3489f6d0c19ebc258fd1e7c0aa79580e6481
+
 }

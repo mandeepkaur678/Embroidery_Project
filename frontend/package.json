@@ -12,12 +12,9 @@
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",
     "axios": "^1.18.1",
-<<<<<<< HEAD
     "framer-motion": "^12.42.2",
-=======
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
->>>>>>> bbcd3489f6d0c19ebc258fd1e7c0aa79580e6481
     "lucide-react": "^1.27.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

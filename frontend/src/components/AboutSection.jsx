@@ -5,17 +5,17 @@ import { Award, CheckCircle2, ArrowRight } from 'lucide-react';
 export const AboutSection = () => {
   return (
     <section id="about" className="py-16 md:py-24 bg-sage/10 relative overflow-hidden border-b border-beige/40">
-      
+
       {/* Background Decorative Rings */}
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-sage/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-beige/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
+
           {/* Left Column Image Showcase */}
           <div className="lg:col-span-6 relative">
-            
+
             {/* Stitched Border Frame Effect */}
             <div className="relative rounded-3xl overflow-hidden p-3 bg-white border border-beige shadow-warm-lg">
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[16/11]">
@@ -45,7 +45,7 @@ export const AboutSection = () => {
 
           {/* Right Column Brand Story Content */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            
+
             {/* Small Label */}
             <span className="text-xs font-bold uppercase tracking-widest text-mocha bg-beige/40 px-3.5 py-1.5 rounded-full border border-beige">
               OUR STORY
@@ -58,7 +58,7 @@ export const AboutSection = () => {
 
             {/* Story Paragraphs */}
             <p className="text-base sm:text-lg text-charcoal/80 leading-relaxed font-normal">
-              At <strong className="text-mocha font-semibold">Thread & Roots</strong>, we believe that true art takes time, patience, and heart. What started as a passion for preserving traditional needlework has grown into a studio dedicated to creating heirloom-quality embroidery pieces inspired by the beauty of nature.
+              At <strong className="text-mocha font-semibold">ArtfulStitches</strong>, we believe that true art takes time, patience, and heart. What started as a passion for preserving traditional needlework has grown into a studio dedicated to creating heirloom-quality embroidery pieces inspired by the beauty of nature.
             </p>
 
             <p className="text-sm sm:text-base text-charcoal/70 leading-relaxed">
@@ -82,10 +82,10 @@ export const AboutSection = () => {
 
             {/* Learn More Action Button */}
             <div className="pt-4">
-              <Button 
-                variant="default" 
-                size="lg" 
-                className="bg-mocha hover:bg-mocha-dark text-cream shadow-warm-md group"
+              <Button
+                variant="default"
+                size="lg"
+                className="bg-[#263028] hover:bg-[#7A8B5B] text-cream shadow-warm-md group"
               >
                 <span>Learn More</span>
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

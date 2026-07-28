@@ -37,7 +37,7 @@ export const CollectionSection = ({ onSelectCollection }) => {
   return (
     <section id="collections" className="py-16 md:py-24 bg-cream border-b border-beige/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 lg:mb-16 gap-6">
           <div className="space-y-3 max-w-2xl">
@@ -51,7 +51,7 @@ export const CollectionSection = ({ onSelectCollection }) => {
               Find handcrafted embroidery artwork designed to bring warmth, texture, and natural elegance into your home.
             </p>
           </div>
-          <Button variant="outline" className="self-start md:self-auto border-mocha text-mocha hover:bg-mocha hover:text-cream">
+          <Button variant="outline" className="self-start md:self-auto border-[#6B4F3A] text-[#6B4F3A] hover:text-cream hover:bg-[#6B4F3A]">
             View All Collections
           </Button>
         </div>
@@ -59,8 +59,8 @@ export const CollectionSection = ({ onSelectCollection }) => {
         {/* 3 Collection Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {collections.map((item) => (
-            <Card 
-              key={item.id} 
+            <Card
+              key={item.id}
               className="group relative bg-white border border-beige/80 rounded-2xl overflow-hidden hover:shadow-warm-lg transition-all duration-500 flex flex-col justify-between"
             >
               {/* Card Image Container with Hover Overlay */}
@@ -71,10 +71,10 @@ export const CollectionSection = ({ onSelectCollection }) => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
-                
+
                 {/* Gradient Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-mocha/85 via-mocha/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-                
+
                 {/* Badge Top Left */}
                 <div className="absolute top-4 left-4 z-10">
                   <span className="inline-flex items-center space-x-1 text-xs font-semibold bg-cream/90 backdrop-blur-sm text-mocha px-3 py-1 rounded-full border border-beige shadow-sm">
@@ -100,8 +100,8 @@ export const CollectionSection = ({ onSelectCollection }) => {
                   {item.description}
                 </p>
 
-                <Button 
-                  variant="secondary" 
+                <Button
+                  variant="secondary"
                   className="w-full justify-center group-hover:bg-mocha group-hover:text-cream transition-colors duration-300"
                   onClick={() => onSelectCollection?.(item.name)}
                 >
