@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: #F8F6F0;
+    color: #2E2823;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Embroidery Stitch Divider Line */
+.stitch-border-dashed {
+  background-image: repeating-linear-gradient(to right, #6B8E6E 0, #6B8E6E 8px, transparent 8px, transparent 16px);
+  height: 2px;
+}
+
+.stitch-border-vertical {
+  background-image: repeating-linear-gradient(to bottom, #6B8E6E 0, #6B8E6E 8px, transparent 8px, transparent 16px);
+  width: 2px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F6F0;
+}
+::-webkit-scrollbar-thumb {
+  background: #E7D8C1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6B8E6E;
+}
