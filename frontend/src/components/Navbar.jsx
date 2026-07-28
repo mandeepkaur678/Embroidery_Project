@@ -1,5 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import {
   Search,
@@ -7,12 +8,13 @@ import {
   ShoppingBag,
   User,
   Menu,
-  X,
+  LogOut,
   Sparkles,
   Scissors
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Sheet } from './ui/Sheet';
+import { useAuth } from '../context/AuthContext';
 
 export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,6 +22,9 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
   const [activeLink, setActiveLink] = useState('Home');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,13 +38,19 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    toast.success('You have been signed out.', { description: 'See you soon at Artful Stitches!' });
+    navigate('/');
+  };
+
   const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'Shop', href: '#products' },
-    { name: 'Categories', href: '#services' },
-    { name: 'About Us', href: '#story' },
-    { name: 'Services', href: '#services' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/#hero' },
+    { name: 'Shop', href: '/#products' },
+    { name: 'Categories', href: '/#services' },
+    { name: 'About Us', href: '/#story' },
+    { name: 'Services', href: '/#services' },
+    { name: 'Contact', href: '/#contact' },
   ];
 
   return (
@@ -52,8 +63,8 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
           <div className="flex items-center justify-between">
 
             {/* Left side: Brand Logo */}
-            <a
-              href="#hero"
+            <Link
+              to="/"
               className="flex items-center gap-2.5 group transition-transform duration-300 hover:scale-102 focus:outline-none"
             >
               <div className="w-9 h-9 rounded-full bg-sage/15 border border-sage/40 flex items-center justify-center text-sage group-hover:bg-sage group-hover:text-white transition-all duration-300">
@@ -67,12 +78,12 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
                   Handcrafted Embroidery
                 </span>
               </div>
-            </a>
+            </Link>
 
             {/* Center/Right Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2">
               {navLinks.map((link) => {
-                const isActive = activeLink === link.name;
+                const isActive = location.pathname === '/' && activeLink === link.name;
                 return (
                   <a
                     key={link.name}
@@ -106,7 +117,7 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
 
               {/* Wishlist */}
               <a
-                href="#products"
+                href="/#products"
                 className="relative p-2 text-earth hover:text-terracotta hover:bg-beige/40 rounded-full transition-all duration-200"
                 aria-label="Wishlist"
                 title="Wishlist"
@@ -121,7 +132,7 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
 
               {/* Shopping Cart */}
               <a
-                href="#products"
+                href="/#products"
                 className="relative p-2 text-earth hover:text-sage hover:bg-beige/40 rounded-full transition-all duration-200 group"
                 aria-label="Shopping Cart"
                 title="Cart"
@@ -134,25 +145,56 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
                 )}
               </a>
 
-              {/* User Profile / Account */}
-              <button
-                className="p-2 text-earth hover:text-terracotta hover:bg-beige/40 rounded-full transition-all duration-200"
-                aria-label="Account"
-                title="Account"
-              >
-                <User className="w-5 h-5" />
-              </button>
+              {/* Auth Actions */}
+              {isAuthenticated ? (
+                <>
+                  {/* User greeting */}
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sage/10 border border-sage/30 hover:bg-sage/20 transition-all duration-200 group"
+                    title="My Account"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-sage flex items-center justify-center text-white text-xs font-bold shrink-0">
+                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                    <span className="text-sm font-medium text-earth-dark group-hover:text-sage-dark transition-colors max-w-[100px] truncate">
+                      {user?.name?.split(' ')[0]}
+                    </span>
+                  </Link>
 
-              {/* Login Button */}
-              <Button variant="outline" size="sm" className="ml-1 border-sage/60 text-sage-dark hover:bg-sage">
-                Sign In
-              </Button>
+                  {/* Logout */}
+                  <button
+                    onClick={handleLogout}
+                    title="Sign Out"
+                    aria-label="Sign Out"
+                    className="p-2 text-earth-muted hover:text-terracotta hover:bg-beige/40 rounded-full transition-all duration-200"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Sign In Button */}
+                  <Link to="/login">
+                    <Button variant="outline" size="sm" className="ml-1 border-sage/60 text-sage-dark hover:bg-sage">
+                      Sign In
+                    </Button>
+                  </Link>
+
+                  {/* Register Button */}
+                  <Link to="/register">
+                    <Button variant="default" size="sm" className="bg-sage hover:bg-terracotta text-white transition-colors duration-200">
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Hamburger Button */}
             <div className="flex items-center gap-2 sm:hidden">
               <a
-                href="#products"
+                href="/#products"
                 className="relative p-2 text-earth hover:text-sage"
                 aria-label="Shopping Cart"
               >
@@ -238,9 +280,28 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
             <Button variant="default" className="w-full justify-center gap-2">
               <ShoppingBag className="w-4 h-4" /> View Cart ({cartCount})
             </Button>
-            <Button variant="outline" className="w-full justify-center gap-2 border-sage text-sage-dark">
-              <User className="w-4 h-4" /> Sign In / Account
-            </Button>
+            {isAuthenticated ? (
+              <button
+                onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-terracotta/60 text-terracotta text-sm font-medium hover:bg-terracotta hover:text-white transition-all duration-200"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out ({user?.name?.split(' ')[0]})
+              </button>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full justify-center gap-2 border-sage text-sage-dark">
+                    <User className="w-4 h-4" /> Sign In
+                  </Button>
+                </Link>
+                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="default" className="w-full justify-center gap-2 bg-sage hover:bg-terracotta text-white">
+                    <User className="w-4 h-4" /> Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Subtle Craft Motto */}
