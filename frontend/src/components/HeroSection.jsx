@@ -82,7 +82,7 @@ export const HeroSection = () => {
                 {/* Main Image Container */}
                 <div className="relative rounded-[2rem] overflow-hidden border-4 border-white shadow-warm-lg bg-cream group">
                   <img
-                    src="https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop"
+                    src="./src/assets/image2.jpg"
                     alt="Artisan floral embroidery hoop handcrafted with natural thread"
                     className="w-full h-[380px] sm:h-[460px] lg:h-[500px] object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   />
