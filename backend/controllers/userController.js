@@ -60,6 +60,7 @@ const registerUser = async (req, res) => {
       return res.status(201).json({
         success: true,
         message: 'User registered successfully',
+
         data: {
           _id: user._id,
           name: user.name,
@@ -112,7 +113,7 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && (await user.matchPassword(password))) {
       const accessToken = generateAccessToken(user._id, user.role);
       const refreshToken = generateRefreshToken(user._id);
 
