@@ -31,9 +31,16 @@ export const LoginForm = () => {
     try {
       const user = await login({ email: data.email, password: data.password });
       toast.success(`Welcome back, ${user.name}!`, {
-        description: 'You have successfully signed in to Artful Stitches.',
+        description: user.role === 'admin'
+          ? 'Signed in as Artful Stitches Admin.'
+          : 'You have successfully signed in to Artful Stitches.',
       });
-      navigate('/');
+
+      if (user?.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       toast.error(err.message || 'Login failed. Please check your credentials.', {
         description: 'Please try again.',
@@ -60,7 +67,6 @@ export const LoginForm = () => {
           Sign in to continue your Artful Stitches journey.
         </p>
 
-        {/* Small Botanical Accent Line */}
         <div className="flex items-center gap-2 pt-1">
           <div className="h-px w-12 bg-beige" />
           <Flower2 className="w-3.5 h-3.5 text-sage" />
@@ -70,7 +76,6 @@ export const LoginForm = () => {
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        {/* Email Field */}
         <AuthInput
           id="email"
           label="Email Address"
@@ -81,7 +86,6 @@ export const LoginForm = () => {
           {...register('email')}
         />
 
-        {/* Password Field */}
         <PasswordInput
           id="password"
           label="Password"
@@ -90,7 +94,6 @@ export const LoginForm = () => {
           {...register('password')}
         />
 
-        {/* Login Options Row */}
         <div className="flex items-center justify-between text-xs sm:text-sm pt-0.5">
           <label className="flex items-center gap-2 cursor-pointer select-none text-earth-muted hover:text-earth transition-colors">
             <input
@@ -110,7 +113,6 @@ export const LoginForm = () => {
           </Link>
         </div>
 
-        {/* Login Button */}
         <Button
           type="submit"
           disabled={isLoading}
@@ -130,7 +132,6 @@ export const LoginForm = () => {
         </Button>
       </form>
 
-      {/* Footer */}
       <div className="pt-4 border-t border-beige/60 text-center">
         <p className="text-xs text-earth-muted">
           Don't have an account?{' '}
