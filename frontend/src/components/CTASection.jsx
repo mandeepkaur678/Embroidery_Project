@@ -63,7 +63,7 @@ export const CTASection = () => {
             </div>
 
             {/* Bottom Guarantee Note */}
-            <p className="text-xs text-creampt-2 font-serif italic">
+            <p className="text-xs text-cream font-serif italic">
               ✦ Free shipping on orders over $75 &bull; Worldwide Delivery Available ✦
             </p>
           </div>

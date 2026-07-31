@@ -198,13 +198,14 @@ export const Shop = () => {
         )}
 
         <div className="mb-8 rounded-[28px] border border-beige/70 bg-white/80 p-4 shadow-warm-sm sm:p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex-1 ">
-              <div className="flex flex-row items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-sage">
+          <div className="flex flex-col gap-4">
+            {/* Search the Collection - top */}
+            <div>
+              <div className="flex flex-row items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-sage mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Search the collection</span>
               </div>
-              <div className="mt-2 flex items-center gap-2 rounded-2xl border border-beige bg-cream px-3 py-2.5 shadow-inner-sm">
+              <div className="flex items-center gap-2 rounded-2xl border border-beige bg-cream px-3 py-2.5 shadow-inner-sm">
                 <Search className="w-4 h-4 text-sage shrink-0" />
                 <input
                   type="text"
@@ -233,6 +234,7 @@ export const Shop = () => {
               </div>
             </div>
 
+            {/* Category Tags - below search */}
             <div className="flex flex-wrap gap-2">
               {MOCK_CATEGORIES.filter((category) => category !== 'All Products').map((category) => {
                 const active = selectedCategory === category;
