@@ -325,7 +325,7 @@ export const Contact = () => {
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-gold">Crafted with care</p>
-                <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Let&apos;s Create Something Beautiful Together</h2>
+                <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Let&apos;s Create Something Beautiful Together</h2>
                 <p className="mt-4 text-base leading-8 text-cream/80">
                   Whether you are looking for a unique handmade piece or have a special design in mind, we are here to help.
                 </p>

@@ -84,11 +84,11 @@ export const AdminProducts = () => {
     setIsDeleting(true);
     try {
       await deleteAdminProduct(deleteDialog.product._id);
-      toast.success('Product deleted successfully.');
-      setProducts(prev => prev.filter(p => p._id !== deleteDialog.product._id));
+      toast.success('Product permanently deleted from MongoDB.');
+      setProducts((prev) => prev.filter((p) => p._id !== deleteDialog.product._id));
       setDeleteDialog({ open: false, product: null });
     } catch (err) {
-      toast.error('Failed to delete product.');
+      toast.error(err.message || 'Failed to delete product.');
     } finally {
       setIsDeleting(false);
     }
@@ -199,7 +199,9 @@ export const AdminProducts = () => {
             <div className="divide-y divide-beige/60">
               {filteredProducts.map((product) => {
                 const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
-                const status = product.stock === 0 ? 'Out of Stock' : (product.status || 'Active');
+                const status = product.isActive === false || product.status === 'Inactive'
+                  ? 'Inactive'
+                  : (product.stock === 0 ? 'Out of Stock' : (product.status || 'Active'));
 
                 return (
                   <div

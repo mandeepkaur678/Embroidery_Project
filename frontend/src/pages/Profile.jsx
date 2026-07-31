@@ -341,7 +341,7 @@ export const Profile = () => {
 
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight">
+                  <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
                     {user?.name || 'Valued Customer'}
                   </h1>
                   {user?.role === 'admin' && (
@@ -358,9 +358,9 @@ export const Profile = () => {
                     <Calendar className="w-3.5 h-3.5 text-cream/80" /> Member since{' '}
                     {user?.createdAt
                       ? new Date(user.createdAt).toLocaleDateString('en-IN', {
-                          month: 'short',
-                          year: 'numeric',
-                        })
+                        month: 'short',
+                        year: 'numeric',
+                      })
                       : '2026'}
                   </span>
                   {user?.phone && (
@@ -397,11 +397,10 @@ export const Profile = () => {
         <div className="flex border-b border-beige mb-8 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === 'orders'
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'orders'
                 ? 'border-sage text-sage-dark bg-sage/5'
                 : 'border-transparent text-earth-muted hover:text-earth'
-            }`}
+              }`}
           >
             <Package className="w-4 h-4" />
             <span>My Orders ({orders.length})</span>
@@ -409,11 +408,10 @@ export const Profile = () => {
 
           <button
             onClick={() => setActiveTab('wishlist')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === 'wishlist'
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'wishlist'
                 ? 'border-sage text-sage-dark bg-sage/5'
                 : 'border-transparent text-earth-muted hover:text-earth'
-            }`}
+              }`}
           >
             <Heart className="w-4 h-4" />
             <span>My Wishlist ({wishlistCount})</span>
@@ -421,11 +419,10 @@ export const Profile = () => {
 
           <button
             onClick={() => setActiveTab('cart')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === 'cart'
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'cart'
                 ? 'border-sage text-sage-dark bg-sage/5'
                 : 'border-transparent text-earth-muted hover:text-earth'
-            }`}
+              }`}
           >
             <ShoppingBag className="w-4 h-4" />
             <span>My Cart ({cartCount})</span>
@@ -433,11 +430,10 @@ export const Profile = () => {
 
           <button
             onClick={() => setActiveTab('addresses')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === 'addresses'
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'addresses'
                 ? 'border-sage text-sage-dark bg-sage/5'
                 : 'border-transparent text-earth-muted hover:text-earth'
-            }`}
+              }`}
           >
             <MapPin className="w-4 h-4" />
             <span>Saved Addresses ({user?.addresses?.length || 0})</span>
@@ -445,11 +441,10 @@ export const Profile = () => {
 
           <button
             onClick={() => setActiveTab('account')}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === 'account'
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${activeTab === 'account'
                 ? 'border-sage text-sage-dark bg-sage/5'
                 : 'border-transparent text-earth-muted hover:text-earth'
-            }`}
+              }`}
           >
             <User className="w-4 h-4" />
             <span>Account Details & Security</span>
@@ -465,11 +460,10 @@ export const Profile = () => {
                   <button
                     key={st}
                     onClick={() => setOrderFilter(st)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                      orderFilter === st
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${orderFilter === st
                         ? 'bg-sage text-cream shadow-xs'
                         : 'bg-beige/60 text-earth hover:bg-beige'
-                    }`}
+                      }`}
                   >
                     {st}
                   </button>
@@ -819,11 +813,10 @@ export const Profile = () => {
                 {user.addresses.map((addr) => (
                   <div
                     key={addr._id}
-                    className={`p-5 rounded-2xl border transition-all ${
-                      addr.isDefault
+                    className={`p-5 rounded-2xl border transition-all ${addr.isDefault
                         ? 'border-sage bg-sage/5 shadow-warm-xs'
                         : 'border-beige/80 bg-cream hover:border-beige'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -1153,8 +1146,8 @@ export const Profile = () => {
                     {addressSubmitting
                       ? 'Saving...'
                       : editingAddress
-                      ? 'Update Address'
-                      : 'Save Address'}
+                        ? 'Update Address'
+                        : 'Save Address'}
                   </Button>
                 </div>
               </form>

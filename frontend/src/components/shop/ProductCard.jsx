@@ -1,10 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, ShoppingBag, Star, Zap } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { toast } from 'sonner';
 
-export const ProductCard = ({ product }) => {
+export const ProductCard = ({ product, onSelectProduct }) => {
+  const { isAuthenticated } = useAuth();
   const { addToCart, buyNow } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const navigate = useNavigate();
@@ -21,8 +24,11 @@ export const ProductCard = ({ product }) => {
     rating = 4.8,
     reviewsCount = 12,
     material,
+    isActive = true,
+    status = 'Active',
   } = product;
 
+  const isAvailable = isActive !== false && status !== 'Inactive';
   const pId = _id || id;
   const inWishlist = isInWishlist(pId);
 
@@ -31,24 +37,62 @@ export const ProductCard = ({ product }) => {
     product.image ||
     'https://images.unsplash.com/photo-1528458909336-e7a0adfac1d5?auto=format&fit=crop&q=80&w=800';
 
+  const handleCardClick = () => {
+    if (!isAvailable) {
+      toast.error('This product is no longer available.');
+      return;
+    }
+    if (onSelectProduct) {
+      onSelectProduct(product);
+    }
+  };
+
   const handleWishlistClick = (e) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error('Please log in to manage your wishlist');
+      navigate('/login');
+      return;
+    }
     toggleWishlist(product);
   };
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error('Please log in to add products to your cart');
+      navigate('/login');
+      return;
+    }
+    if (!isAvailable) {
+      toast.error('This product is unavailable');
+      return;
+    }
     addToCart(product, 1);
   };
 
   const handleBuyNow = (e) => {
     e.stopPropagation();
-    buyNow(product, 1);
-    navigate('/checkout?direct=true');
+    if (!isAuthenticated) {
+      toast.error('Please log in to purchase products');
+      navigate('/login');
+      return;
+    }
+    if (!isAvailable) {
+      toast.error('This product is unavailable');
+      return;
+    }
+    const success = buyNow(product, 1);
+    if (success !== false) {
+      navigate('/checkout?direct=true');
+    }
   };
 
   return (
-    <div className="group bg-cream border border-beige/80 rounded-2xl p-3.5 sm:p-4 hover:shadow-warm-md transition-all duration-300 flex flex-col justify-between h-full relative">
+    <div
+      onClick={handleCardClick}
+      className="group bg-cream border border-beige/80 rounded-2xl p-3.5 sm:p-4 hover:shadow-warm-md transition-all duration-300 flex flex-col justify-between h-full relative cursor-pointer"
+    >
       {/* Top Image Container */}
       <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl bg-ivory mb-3.5">
         <img

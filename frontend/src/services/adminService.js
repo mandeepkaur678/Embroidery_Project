@@ -83,7 +83,7 @@ export const getDashboardStats = async () => {
 
 export const getAdminProducts = async () => {
   try {
-    const res = await fetch('/api/products', { headers: getAuthHeaders() });
+    const res = await fetch('/api/products?includeInactive=true', { headers: getAuthHeaders() });
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.message || 'Failed to fetch products');
@@ -164,10 +164,10 @@ export const deleteAdminProduct = async (id) => {
     if (!res.ok) {
       throw new Error(data.message || 'Failed to delete product');
     }
-    if (!data.success || !data.data) {
-      throw new Error('product was not deleted');
+    if (!data.success) {
+      throw new Error(data.message || 'product was not deleted');
     }
-    return data.data;
+    return data;
   } catch (error) {
     console.error('Error deleting product', error);
     throw error;

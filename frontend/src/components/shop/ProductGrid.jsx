@@ -16,6 +16,7 @@ export const ProductGrid = ({
   onOpenMobileFilters,
   onResetFilters,
   onAddToCart,
+  onSelectProduct,
   onRetry
 }) => {
   // Calculation for product count display
@@ -125,6 +126,7 @@ export const ProductGrid = ({
               key={product._id}
               product={product}
               onAddToCart={onAddToCart}
+              onSelectProduct={onSelectProduct}
             />
           ))}
         </div>

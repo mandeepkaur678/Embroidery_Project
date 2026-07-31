@@ -116,6 +116,22 @@ export const Checkout = () => {
         paymentMethod: 'COD',
       };
 
+      if (useNewAddress || !user?.addresses?.length) {
+        try {
+          await addAddress({
+            fullName: shippingAddress.fullName.trim(),
+            phone: shippingAddress.phone.trim(),
+            addressLine: shippingAddress.address.trim(),
+            city: shippingAddress.city.trim(),
+            state: shippingAddress.state.trim(),
+            postalCode: shippingAddress.pincode.trim(),
+            isDefault: !user?.addresses?.length,
+          });
+        } catch (addrErr) {
+          console.warn('Could not save new address to MongoDB user profile:', addrErr.message);
+        }
+      }
+
       const createdOrder = await createOrderApi(orderPayload);
       toast.success('🎉 Order Placed Successfully!', {
         description: `Order #${createdOrder._id?.substring(createdOrder._id.length - 8)?.toUpperCase()} confirmed via Cash on Delivery.`,

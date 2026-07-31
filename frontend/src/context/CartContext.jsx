@@ -78,38 +78,20 @@ export const CartProvider = ({ children }) => {
   /** Add item to cart */
   const addToCart = useCallback(
     async (product, quantity = 1) => {
-      const pId = product._id || product.id;
-      if (isAuthenticated) {
-        try {
-          await addToCartApi(pId, quantity);
-          await fetchBackendCart();
-        } catch (err) {
-          toast.error(err.message || 'Failed to add item to server cart');
-        }
-      } else {
-        setCartItems((prev) => {
-          const existingIndex = prev.findIndex((item) => item._id === pId || item.productId === pId);
-          if (existingIndex > -1) {
-            const updated = [...prev];
-            updated[existingIndex].quantity += quantity;
-            return updated;
-          } else {
-            const newItem = {
-              _id: pId,
-              productId: pId,
-              name: product.name,
-              price: product.price,
-              image:
-                (product.images && product.images[0]) ||
-                product.image ||
-                'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop',
-              quantity,
-            };
-            return [...prev, newItem];
-          }
-        });
+      if (!isAuthenticated) {
+        toast.error('Please log in to add products to your cart');
+        return false;
       }
-      toast.success(`${product.name} added to cart!`);
+      const pId = product._id || product.id;
+      try {
+        await addToCartApi(pId, quantity);
+        await fetchBackendCart();
+        toast.success(`${product.name} added to cart!`);
+        return true;
+      } catch (err) {
+        toast.error(err.message || 'Failed to add item to server cart');
+        return false;
+      }
     },
     [isAuthenticated, fetchBackendCart]
   );
@@ -170,21 +152,29 @@ export const CartProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   /** Set direct buy item ("Buy Now") */
-  const buyNow = useCallback((product, quantity = 1) => {
-    const pId = product._id || product.id;
-    const item = {
-      _id: pId,
-      productId: pId,
-      name: product.name,
-      price: product.price,
-      image:
-        (product.images && product.images[0]) ||
-        product.image ||
-        'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop',
-      quantity,
-    };
-    setDirectBuyItem(item);
-  }, []);
+  const buyNow = useCallback(
+    (product, quantity = 1) => {
+      if (!isAuthenticated) {
+        toast.error('Please log in to purchase products');
+        return false;
+      }
+      const pId = product._id || product.id;
+      const item = {
+        _id: pId,
+        productId: pId,
+        name: product.name,
+        price: product.price,
+        image:
+          (product.images && product.images[0]) ||
+          product.image ||
+          'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop',
+        quantity,
+      };
+      setDirectBuyItem(item);
+      return true;
+    },
+    [isAuthenticated]
+  );
 
   const clearDirectBuy = useCallback(() => {
     setDirectBuyItem(null);

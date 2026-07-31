@@ -80,6 +80,13 @@ const getProducts = async (req, res) => {
 
     const query = {};
 
+    // Do not show inactive products to regular public requests
+    const includeInactive = req.query.includeInactive === 'true';
+    if (!includeInactive) {
+      query.isActive = { $ne: false };
+      query.status = { $ne: 'Draft' };
+    }
+
     // Filter by category slug, name or ObjectId if provided
     if (category && category !== 'All Products' && category !== 'all') {
       let resolvedCategory = null;
@@ -136,7 +143,7 @@ const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate('category', 'name description image');
 
-    if (!product) {
+    if (!product || product.isActive === false) {
       return res.status(404).json({
         success: false,
         message: 'Product not found',
@@ -304,11 +311,12 @@ const deleteProduct = async (req, res) => {
       });
     }
 
+    // Permanently remove product document from MongoDB database
     await product.deleteOne();
 
     return res.status(200).json({
       success: true,
-      message: 'Product deleted successfully',
+      message: 'Product permanently removed from MongoDB successfully',
     });
   } catch (error) {
     console.error('Delete Product Error:', error);

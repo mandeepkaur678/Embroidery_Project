@@ -9,6 +9,7 @@ import { ShopPagination } from '../components/shop/ShopPagination';
 import { BenefitsSection } from '../components/shop/BenefitsSection';
 import { Footer } from '../components/Footer';
 import { Sheet } from '../components/ui/Sheet';
+import { ProductDetailModal } from '../components/shop/ProductDetailModal';
 import { fetchProducts } from '../services/productService';
 import { MOCK_CATEGORIES } from '../data/mockProducts';
 
@@ -43,8 +44,9 @@ export const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Mobile Filter Sheet Drawer
+  // Mobile Filter Sheet Drawer & Product Modal State
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [selectedProductModal, setSelectedProductModal] = useState(null);
   const searchDebounceRef = useRef(null);
 
   // Synchronize state from URL search params on mount or param changes
@@ -281,6 +283,7 @@ export const Shop = () => {
               onSortChange={handleSortChange}
               onOpenMobileFilters={() => setMobileFilterOpen(true)}
               onResetFilters={handleResetFilters}
+              onSelectProduct={(p) => setSelectedProductModal(p)}
               onRetry={loadProductsData}
             />
 
@@ -329,6 +332,14 @@ export const Shop = () => {
           />
         </div>
       </Sheet>
+
+      {/* Product Details Popup Modal */}
+      {selectedProductModal && (
+        <ProductDetailModal
+          product={selectedProductModal}
+          onClose={() => setSelectedProductModal(null)}
+        />
+      )}
 
       {/* 4. Trust & Benefits Section */}
       <BenefitsSection />

@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from './ui/Card';
 import { Button } from './ui/Button';
 import { Heart, ShoppingBag, Zap, ArrowRight, Star } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { ProductDetailModal } from './shop/ProductDetailModal';
+import { toast } from 'sonner';
 
 const products = [
   {
@@ -46,10 +49,17 @@ const products = [
 
 export const FeaturedProducts = () => {
   const [wishlist, setWishlist] = useState(['featured-1', 'featured-3']);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isAuthenticated } = useAuth();
   const { addToCart, buyNow } = useCart();
   const navigate = useNavigate();
 
   const toggleWishlist = (id) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to manage your wishlist');
+      navigate('/login');
+      return;
+    }
     if (wishlist.includes(id)) {
       setWishlist(wishlist.filter((itemId) => itemId !== id));
     } else {
@@ -57,9 +67,25 @@ export const FeaturedProducts = () => {
     }
   };
 
+  const handleAddToCart = (product) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add products to your cart');
+      navigate('/login');
+      return;
+    }
+    addToCart(product, 1);
+  };
+
   const handleBuyNow = (product) => {
-    buyNow(product, 1);
-    navigate('/checkout?direct=true');
+    if (!isAuthenticated) {
+      toast.error('Please log in to purchase products');
+      navigate('/login');
+      return;
+    }
+    const success = buyNow(product, 1);
+    if (success !== false) {
+      navigate('/checkout?direct=true');
+    }
   };
 
   return (
@@ -89,7 +115,8 @@ export const FeaturedProducts = () => {
             return (
               <Card
                 key={product._id}
-                className="group overflow-hidden bg-white/90 border-beige/80 hover:border-sage transition-all duration-300 hover:-translate-y-1.5 hover:shadow-warm-md flex flex-col justify-between"
+                onClick={() => setSelectedProduct(product)}
+                className="group overflow-hidden bg-white/90 border-beige/80 hover:border-sage transition-all duration-300 hover:-translate-y-1.5 hover:shadow-warm-md flex flex-col justify-between cursor-pointer"
               >
                 <div>
                   {/* Product Image Container */}
@@ -107,7 +134,10 @@ export const FeaturedProducts = () => {
 
                     {/* Wishlist Button */}
                     <button
-                      onClick={() => toggleWishlist(product._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product._id);
+                      }}
                       className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all duration-300 ${
                         isFavorite
                           ? 'bg-terracotta text-white shadow-warm-sm'
@@ -148,7 +178,10 @@ export const FeaturedProducts = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addToCart(product, 1)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product);
+                    }}
                     className="w-full justify-center border-sage/60 text-sage-dark hover:bg-sage hover:text-white transition-colors text-xs"
                   >
                     <ShoppingBag className="w-3.5 h-3.5 mr-1" />
@@ -158,7 +191,10 @@ export const FeaturedProducts = () => {
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={() => handleBuyNow(product)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBuyNow(product);
+                    }}
                     className="w-full justify-center bg-terracotta hover:bg-terracotta-dark text-white transition-colors text-xs"
                   >
                     <Zap className="w-3.5 h-3.5 mr-1" />
@@ -183,6 +219,14 @@ export const FeaturedProducts = () => {
           </Button>
         </div>
       </div>
+
+      {/* Product Detail Modal */}
+      {selectedProduct && (
+        <ProductDetailModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </section>
   );
 };

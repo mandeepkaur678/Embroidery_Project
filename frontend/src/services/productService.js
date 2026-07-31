@@ -56,15 +56,27 @@ export const fetchProducts = async (params = {}) => {
 function filterAndSortProducts(products, { category, search, sort, minPrice, maxPrice, color }) {
   let list = [...products];
 
+  // Filter out inactive / soft-deleted products for public users
+  list = list.filter((p) => p.isActive !== false && p.status !== 'Inactive');
+
   // Category filter
   if (category && category !== 'All Products') {
     const normalizedCategory = category.toLowerCase().trim();
     list = list.filter((p) => {
-      // category can be a populated object { name, slug } or a plain string
       const catName = typeof p.category === 'object'
         ? (p.category?.name || '')
         : (p.category || '');
-      return catName.toLowerCase().trim() === normalizedCategory;
+      const catSlug = typeof p.category === 'object'
+        ? (p.category?.slug || '')
+        : '';
+      const catId = typeof p.category === 'object'
+        ? (p.category?._id || '')
+        : (p.category || '');
+      return (
+        catName.toLowerCase().trim() === normalizedCategory ||
+        catSlug.toLowerCase().trim() === normalizedCategory ||
+        catId.toString() === category
+      );
     });
   }
 
@@ -78,9 +90,12 @@ function filterAndSortProducts(products, { category, search, sort, minPrice, max
     );
   }
 
-  // Price range filter
+  // Price range filter (if maxPrice is 5000 or default max, treat as 5000+ no upper limit)
   list = list.filter(p => {
-    const activePrice = p.price || 0;
+    const activePrice = Number(p.price) || 0;
+    if (maxPrice >= 5000) {
+      return activePrice >= minPrice;
+    }
     return activePrice >= minPrice && activePrice <= maxPrice;
   });
 
