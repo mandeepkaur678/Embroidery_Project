@@ -10,6 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "seed:admin": "node seedAdmin.js",
+    "start": "node server.js",
+    "build": "",
     "create:admin": "node scripts/createAdmin.js"
   },
   "dependencies": {
