@@ -3,7 +3,7 @@
  * API service for product retrieval with query filtering and mock data fallback.
  */
 
-import { MOCK_PRODUCTS } from '../data/mockProducts';
+
 
 const API_BASE = '/api/products';
 
@@ -25,7 +25,7 @@ export const fetchProducts = async (params = {}) => {
   try {
     // Build query params
     const query = new URLSearchParams();
-    if (category && category !== 'All Products') query.append('category', category);
+
     if (search) query.append('search', search);
 
     const res = await fetch(`${API_BASE}?${query.toString()}`, {
@@ -33,21 +33,21 @@ export const fetchProducts = async (params = {}) => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    if (res.ok) {
-      const result = await res.json();
-      if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-        // Apply client-side sorting & filtering if API returns un-sorted array
-        let filtered = filterAndSortProducts(result.data, { category, search, sort, minPrice, maxPrice, color });
-        return { products: filtered, total: filtered.length };
-      }
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || 'Failed to fetch products');
     }
-  } catch (err) {
-    console.warn('Backend API connection unavailable, using local Artful Stitches mock dataset.', err.message);
+    if (!result.success || !Array.isArray(result.data)) {
+      throw new Error('products were not fetched');
+    }
+    // Apply client-side sorting & filtering if API returns un-sorted array
+    let filtered = filterAndSortProducts(result.data, { category, search, sort, minPrice, maxPrice, color });
+    return { products: filtered, total: filtered.length };
+  } catch (error) {
+    console.error('Error fetching products', error);
+    throw error;
   }
 
-  // Local fallback processing
-  let filtered = filterAndSortProducts(MOCK_PRODUCTS, { category, search, sort, minPrice, maxPrice, color });
-  return { products: filtered, total: filtered.length };
 };
 
 /**
@@ -58,7 +58,14 @@ function filterAndSortProducts(products, { category, search, sort, minPrice, max
 
   // Category filter
   if (category && category !== 'All Products') {
-    list = list.filter(p => p.category?.toLowerCase() === category.toLowerCase());
+    const normalizedCategory = category.toLowerCase().trim();
+    list = list.filter((p) => {
+      // category can be a populated object { name, slug } or a plain string
+      const catName = typeof p.category === 'object'
+        ? (p.category?.name || '')
+        : (p.category || '');
+      return catName.toLowerCase().trim() === normalizedCategory;
+    });
   }
 
   // Search keyword filter
@@ -67,7 +74,7 @@ function filterAndSortProducts(products, { category, search, sort, minPrice, max
     list = list.filter(p =>
       p.name?.toLowerCase().includes(q) ||
       p.description?.toLowerCase().includes(q) ||
-      p.category?.toLowerCase().includes(q)
+      p.category?.name?.toLowerCase().includes(q)
     );
   }
 

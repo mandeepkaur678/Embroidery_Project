@@ -11,6 +11,7 @@ import {
   deleteUserAddress,
   getUsers,
   getUserById,
+  updateUserStatus,
   updateUserRole,
   deleteUser,
 } from '../controllers/userController.js';
@@ -111,6 +112,13 @@ router
   .route('/:id')
   .get(protect, admin, getUserById)
   .delete(protect, admin, deleteUser);
+
+/**
+ * @route   PUT /api/users/:id/status
+ * @desc    Activate or deactivate a user account
+ * @access  Private/Admin
+ */
+router.put('/:id/status', protect, admin, updateUserStatus);
 
 /**
  * @route   PUT /api/users/:id/role

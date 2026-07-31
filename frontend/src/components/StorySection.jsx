@@ -6,7 +6,7 @@ export const StorySection = () => {
   return (
     <section id="story" className="py-16 md:py-24 bg-cream-card relative border-t border-beige/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header Badge */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-sage-dark bg-sage/15 px-3.5 py-1 rounded-full border border-sage/30">
@@ -20,17 +20,17 @@ export const StorySection = () => {
 
         {/* Two-Column Story Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
+
           {/* LEFT: Artisan Image */}
           <div className="lg:col-span-6 relative">
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              
+
               {/* Decorative Frame */}
               <div className="absolute inset-0 bg-terracotta/10 rounded-[2.5rem] transform rotate-2" />
-              
+
               <div className="relative rounded-[2rem] overflow-hidden border-4 border-white shadow-warm-lg">
-                <img 
-                  src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?q=80&w=900&auto=format&fit=crop" 
+                <img
+                  src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?q=80&w=900&auto=format&fit=crop"
                   alt="Hands carefully stitching a botanical embroidery pattern"
                   className="w-full h-[420px] sm:h-[500px] object-cover transition-transform duration-700 hover:scale-104"
                 />
@@ -47,7 +47,7 @@ export const StorySection = () => {
 
           {/* RIGHT: Story Content */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            
+
             <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-earth leading-snug">
               Stitched With Passion, <br className="hidden sm:inline" />
               <span className="text-terracotta italic">Created With Purpose</span>
@@ -68,7 +68,7 @@ export const StorySection = () => {
             {/* CTA Button */}
             <div className="pt-2">
               <Button variant="secondary" size="lg" className="shadow-warm-md">
-                <span>Learn More About Us</span>
+                <span>Learn More</span>
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </div>

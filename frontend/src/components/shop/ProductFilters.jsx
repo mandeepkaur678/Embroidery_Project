@@ -12,6 +12,7 @@ export const ProductFilters = ({
   onResetFilters,
   totalResultsCount
 }) => {
+
   return (
     <div className="bg-cream border border-beige rounded-2xl p-5 sm:p-6 shadow-warm-sm space-y-7">
 
@@ -47,8 +48,8 @@ export const ProductFilters = ({
                 key={cat}
                 onClick={() => onSelectCategory(cat)}
                 className={`w-full text-left px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-between group ${isSelected
-                    ? 'bg-sage text-cream shadow-warm-sm font-semibold'
-                    : 'text-charcoal hover:bg-beige/40 border border-transparent hover:border-beige'
+                  ? 'bg-sage text-cream shadow-warm-sm font-semibold'
+                  : 'text-charcoal hover:bg-beige/40 border border-transparent hover:border-beige'
                   }`}
               >
                 <span>{cat}</span>
@@ -110,8 +111,8 @@ export const ProductFilters = ({
                 title={c.name}
                 aria-label={`Filter by ${c.name}`}
                 className={`relative w-8 h-8 rounded-full transition-all duration-200 flex items-center justify-center border ${isSelected
-                    ? 'ring-2 ring-sage ring-offset-2 scale-110 shadow-warm-sm'
-                    : 'border-beige hover:scale-105'
+                  ? 'ring-2 ring-sage ring-offset-2 scale-110 shadow-warm-sm'
+                  : 'border-beige hover:scale-105'
                   }`}
                 style={{ backgroundColor: c.hex }}
               >

@@ -17,10 +17,15 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Product price is required'],
       min: [0, 'Price cannot be negative'],
     },
+    discountPrice: {
+      type: Number,
+      default: null,
+      min: [0, 'Discount price cannot be negative'],
+    },
     category: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
       required: [true, 'Product category is required'],
-      trim: true,
     },
     images: [
       {
@@ -28,6 +33,12 @@ const productSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+    stock: {
+      type: Number,
+      required: [true, 'Stock quantity is required'],
+      min: [0, 'Stock cannot be negative'],
+      default: 0,
+    },
     sizes: [
       {
         type: String,
@@ -44,6 +55,14 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Product material is required'],
       trim: true,
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {

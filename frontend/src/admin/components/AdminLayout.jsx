@@ -15,7 +15,7 @@ export const AdminLayout = ({ children, title, subtitle, actions }) => {
 
       {/* Main Admin Body */}
       <div className="flex-1 flex flex-col min-w-0">
-        <AdminHeader onOpenMobileMenu={() => setMobileMenuOpen(true)} />
+        <AdminHeader onOpenMobileMenu={() => setMobileMenuOpen(true)} title={title} />
 
         {/* Page Content Container */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">

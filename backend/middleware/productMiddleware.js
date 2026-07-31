@@ -14,11 +14,41 @@ export const validateProductId = (req, res, next) => {
   next();
 };
 
+const parseNumberField = (value) => {
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? value : parsed;
+  }
+  return value;
+};
+
+const parseArrayField = (value) => {
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+  return value;
+};
+
 /**
  * Middleware to validate product data for creation and updates
  */
 export const validateProductInput = (req, res, next) => {
-  const { name, description, price, category, material, images, sizes, colors } = req.body;
+  let { name, description, price, discountPrice, category, material, images, sizes, colors, stock } = req.body;
+
+  price = parseNumberField(price);
+  discountPrice = parseNumberField(discountPrice);
+  stock = parseNumberField(stock);
+  sizes = parseArrayField(sizes);
+  colors = parseArrayField(colors);
+
+  req.body.price = price;
+  req.body.discountPrice = discountPrice;
+  req.body.stock = stock;
+  req.body.sizes = sizes;
+  req.body.colors = colors;
 
   // Validation for POST (creation) requires all main fields
   if (req.method === 'POST') {
@@ -46,7 +76,7 @@ export const validateProductInput = (req, res, next) => {
     if (!category || typeof category !== 'string' || category.trim() === '') {
       return res.status(400).json({
         success: false,
-        message: 'Product category is required and cannot be empty',
+        message: 'Category is required',
       });
     }
 
@@ -59,21 +89,21 @@ export const validateProductInput = (req, res, next) => {
   }
 
   // Type validation for optional/array fields on both POST and PUT
-  if (images !== undefined && !Array.isArray(images)) {
+  if (images !== undefined && images !== null && !Array.isArray(images)) {
     return res.status(400).json({
       success: false,
       message: 'Images must be an array of image URLs',
     });
   }
 
-  if (sizes !== undefined && !Array.isArray(sizes)) {
+  if (sizes !== undefined && sizes !== null && !Array.isArray(sizes)) {
     return res.status(400).json({
       success: false,
       message: 'Sizes must be an array of strings',
     });
   }
 
-  if (colors !== undefined && !Array.isArray(colors)) {
+  if (colors !== undefined && colors !== null && !Array.isArray(colors)) {
     return res.status(400).json({
       success: false,
       message: 'Colors must be an array of strings',
@@ -84,6 +114,20 @@ export const validateProductInput = (req, res, next) => {
     return res.status(400).json({
       success: false,
       message: 'Price must be a non-negative number',
+    });
+  }
+
+  if (discountPrice !== undefined && discountPrice !== null && (typeof discountPrice !== 'number' || discountPrice < 0)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Discount price must be a non-negative number',
+    });
+  }
+
+  if (stock !== undefined && (typeof stock !== 'number' || stock < 0)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Stock must be a non-negative number',
     });
   }
 

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Search, Sparkles, ArrowRight, X } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { ShopHero } from '../components/shop/ShopHero';
 import { ProductFilters } from '../components/shop/ProductFilters';
@@ -9,6 +10,7 @@ import { BenefitsSection } from '../components/shop/BenefitsSection';
 import { Footer } from '../components/Footer';
 import { Sheet } from '../components/ui/Sheet';
 import { fetchProducts } from '../services/productService';
+import { MOCK_CATEGORIES } from '../data/mockProducts';
 
 export const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,6 +31,9 @@ export const Shop = () => {
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get('search') || ''
   );
+  const [searchInputValue, setSearchInputValue] = useState(
+    searchParams.get('search') || ''
+  );
 
   // Pagination & Loading States
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,12 +45,14 @@ export const Shop = () => {
 
   // Mobile Filter Sheet Drawer
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const searchDebounceRef = useRef(null);
 
   // Synchronize state from URL search params on mount or param changes
   useEffect(() => {
     const qSearch = searchParams.get('search') || '';
     const qCategory = searchParams.get('category') || 'All Products';
     setSearchQuery(qSearch);
+    setSearchInputValue(qSearch);
     if (qCategory) setSelectedCategory(qCategory);
   }, [searchParams]);
 
@@ -78,9 +85,24 @@ export const Shop = () => {
   }, [loadProductsData]);
 
   // Reset page to 1 when filters change
+  const updateUrlParams = (nextCategory = selectedCategory, nextSearch = searchQuery) => {
+    const nextParams = {};
+
+    if (nextSearch.trim()) {
+      nextParams.search = nextSearch.trim();
+    }
+
+    if (nextCategory && nextCategory !== 'All Products') {
+      nextParams.category = nextCategory;
+    }
+
+    setSearchParams(nextParams);
+  };
+
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     setCurrentPage(1);
+    updateUrlParams(category, searchQuery);
   };
 
   const handlePriceChange = (maxVal) => {
@@ -98,12 +120,44 @@ export const Shop = () => {
     setCurrentPage(1);
   };
 
+  const handleSearchInputChange = (event) => {
+    const value = event.target.value;
+    setSearchInputValue(value);
+
+    // Debounce: fire search 400ms after user stops typing
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => {
+      const trimmed = value.trim();
+      setSearchQuery(trimmed);
+      setCurrentPage(1);
+      updateUrlParams(selectedCategory, trimmed);
+    }, 400);
+  };
+
+  const handleSearchSubmit = (event) => {
+    if (event?.type === 'keydown' && event.key !== 'Enter') return;
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    const trimmed = searchInputValue.trim();
+    setSearchQuery(trimmed);
+    setCurrentPage(1);
+    updateUrlParams(selectedCategory, trimmed);
+  };
+
+  const handleClearSearch = () => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    setSearchInputValue('');
+    setSearchQuery('');
+    setCurrentPage(1);
+    updateUrlParams(selectedCategory, '');
+  };
+
   const handleResetFilters = () => {
     setSelectedCategory('All Products');
     setPriceRange(5000);
     setSelectedColor('');
     setSortValue('featured');
     setSearchQuery('');
+    setSearchInputValue('');
     setCurrentPage(1);
     setSearchParams({});
   };
@@ -130,19 +184,72 @@ export const Shop = () => {
         {searchQuery && (
           <div className="mb-6 bg-ivory border border-beige rounded-2xl px-5 py-3 flex items-center justify-between shadow-warm-sm">
             <p className="text-sm text-earth">
-              Showing search results for: <span className="font-bold text-sage">"{searchQuery}"</span>
+              Showing results for: <span className="font-bold text-sage">"{searchQuery}"</span>
             </p>
             <button
-              onClick={() => {
-                setSearchQuery('');
-                setSearchParams({});
-              }}
+              onClick={handleClearSearch}
               className="text-xs text-terracotta hover:underline font-semibold"
             >
               Clear Search
             </button>
           </div>
         )}
+
+        <div className="mb-8 rounded-[28px] border border-beige/70 bg-white/80 p-4 shadow-warm-sm sm:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex-1 ">
+              <div className="flex flex-row items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-sage">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Search the collection</span>
+              </div>
+              <div className="mt-2 flex items-center gap-2 rounded-2xl border border-beige bg-cream px-3 py-2.5 shadow-inner-sm">
+                <Search className="w-4 h-4 text-sage shrink-0" />
+                <input
+                  type="text"
+                  value={searchInputValue}
+                  onChange={handleSearchInputChange}
+                  onKeyDown={handleSearchSubmit}
+                  placeholder="Search floral hoops, embroidered bags, custom keepsakes..."
+                  className="w-full bg-transparent text-sm text-earth placeholder:text-charcoal/50 focus:outline-none"
+                />
+                {searchInputValue && (
+                  <button
+                    onClick={handleClearSearch}
+                    className="p-0.5 text-earth/50 hover:text-terracotta transition-colors shrink-0"
+                    title="Clear search"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={handleSearchSubmit}
+                  className="inline-flex items-center gap-1 rounded-full bg-sage px-3 py-1.5 text-xs font-semibold text-cream transition hover:bg-sage-dark shrink-0"
+                >
+                  <span>Search</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {MOCK_CATEGORIES.filter((category) => category !== 'All Products').map((category) => {
+                const active = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    onClick={() => handleCategoryChange(category)}
+                    className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${active
+                      ? 'border-sage bg-sage text-cream shadow-warm-sm'
+                      : 'border-beige bg-cream text-earth hover:border-sage/40 hover:text-sage-dark'
+                      }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 

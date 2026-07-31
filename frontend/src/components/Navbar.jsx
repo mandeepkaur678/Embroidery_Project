@@ -10,18 +10,22 @@ import {
   LogOut,
   Sparkles,
   Scissors,
-  ShieldCheck
+  ShieldCheck,
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Sheet } from './ui/Sheet';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
-export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
+export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAuthenticated, logout } = useAuth();
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,15 +50,15 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Shop', href: '/shop' },
-    { name: 'Categories', href: '/#services' },
-    { name: 'About Us', href: '/#story' },
-    { name: 'Custom Orders', href: '/#contact' },
-    { name: 'Contact', href: '/#contact' },
+    { name: 'Categories', href: '/categories' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   const handleSearchSubmit = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
-      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      const trimmed = searchQuery.trim();
+      navigate(`/shop?search=${encodeURIComponent(trimmed)}`);
       setSearchOpen(false);
     }
   };
@@ -67,7 +71,6 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-
             {/* Left side: Brand Logo */}
             <Link
               to="/"
@@ -91,7 +94,9 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
               {navLinks.map((link) => {
                 const isActive =
                   location.pathname === link.href ||
-                  (link.href === '/shop' && location.pathname.startsWith('/shop'));
+                  (link.href === '/shop' && location.pathname.startsWith('/shop')) ||
+                  (link.href === '/categories' && location.pathname.startsWith('/categories')) ||
+                  (link.href === '/about' && location.pathname.startsWith('/about'));
 
                 return link.href.startsWith('/#') ? (
                   <a
@@ -132,60 +137,56 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
               </button>
 
               {/* Wishlist Link */}
-              <Link
-                to="/shop"
-                className="relative p-2 text-earth hover:text-terracotta hover:bg-beige/40 rounded-full transition-all duration-200"
-                aria-label="Wishlist"
-                title="Wishlist"
-              >
-                <Heart className="w-5 h-5" />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-terracotta text-cream text-[10px] font-bold rounded-full flex items-center justify-center">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
+{user?.role !== 'admin' && (
+  <Link
+    to={isAuthenticated ? '/profile' : '/login'}
+    className="relative p-2 text-earth hover:text-terracotta hover:bg-beige/40 rounded-full transition-all duration-200"
+    aria-label="Wishlist"
+    title="My Wishlist"
+  >
+    <Heart className="w-5 h-5" />
+    {wishlistCount > 0 && (
+      <span className="absolute top-1 right-1 w-4 h-4 bg-terracotta text-cream text-[10px] font-bold rounded-full flex items-center justify-center">
+        {wishlistCount}
+      </span>
+    )}
+  </Link>
+)}
 
-              {/* Shopping Cart */}
-              <Link
-                to="/shop"
-                className="relative p-2 text-earth hover:text-sage hover:bg-beige/40 rounded-full transition-all duration-200 group"
-                aria-label="Shopping Cart"
-                title="Cart"
-              >
-                <ShoppingBag className="w-5 h-5 group-hover:scale-105 transition-transform" />
-                {cartCount > 0 && (
-                  <span className="px-1 absolute top-1 right-1 w-4.5 h-4.5 bg-sage text-cream text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              {/* Shopping Cart Link */}
+{user?.role !== 'admin' && (
+  <Link
+    to="/cart"
+    className="relative p-2 text-earth hover:text-sage hover:bg-beige/40 rounded-full transition-all duration-200 group"
+    aria-label="Shopping Cart"
+    title="Cart"
+  >
+    <ShoppingBag className="w-5 h-5 group-hover:scale-105 transition-transform" />
+    {cartCount > 0 && (
+      <span className="px-1 absolute top-1 right-1 w-4.5 h-4.5 bg-sage text-cream text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
+        {cartCount}
+      </span>
+    )}
+  </Link>
+)}
 
               {/* Auth Actions */}
               {isAuthenticated ? (
                 <>
-                  {/* ADMIN ONLY BADGE & LINK */}
-                  {user?.role === 'admin' && (
-                    <Link
-                      to="/admin/dashboard"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-terracotta text-cream text-xs font-bold hover:bg-terracotta-dark transition-all duration-200 shadow-xs"
-                      title="Admin Dashboard"
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Admin Portal</span>
-                    </Link>
-                  )}
-
                   <Link
-                    to="/profile"
+                    to={user?.role === 'admin' ? '/admin/dashboard' : '/profile'}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-sage/10 border border-sage/30 hover:bg-sage/20 transition-all duration-200 group"
-                    title="My Account"
+                    title={user?.role === 'admin' ? 'Admin Dashboard' : 'My Profile & Orders'}
                   >
-                    <div className="w-6 h-6 rounded-full bg-sage flex items-center justify-center text-cream text-xs font-bold shrink-0">
-                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                    <div className="w-7 h-7 rounded-full bg-sage flex items-center justify-center text-cream text-xs font-bold shrink-0 overflow-hidden">
+                      {user?.profileImage ? (
+                        <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover rounded-full" />
+                      ) : (
+                        user?.name?.charAt(0)?.toUpperCase() || 'U'
+                      )}
                     </div>
                     <span className="text-sm font-medium text-earth group-hover:text-sage-dark transition-colors max-w-[100px] truncate">
-                      {user?.name?.split(' ')[0]}
+                      {user?.role === 'admin' ? 'Admin' : (user?.name?.split(' ')[0] || '')}
                     </span>
                   </Link>
 
@@ -217,11 +218,7 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
 
             {/* Mobile Hamburger Button */}
             <div className="flex items-center gap-2 sm:hidden">
-              <Link
-                to="/shop"
-                className="relative p-2 text-earth hover:text-sage"
-                aria-label="Shopping Cart"
-              >
+              <Link to="/cart" className="relative p-2 text-earth hover:text-sage" aria-label="Shopping Cart">
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
                   <span className="absolute top-0 right-0 w-4 h-4 bg-sage text-cream text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -238,7 +235,6 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
                 <Menu className="w-6 h-6" />
               </button>
             </div>
-
           </div>
         </div>
 
@@ -268,11 +264,7 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
       </header>
 
       {/* Mobile Drawer Navigation */}
-      <Sheet
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-        title="Artful Stitches"
-      >
+      <Sheet isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} title="Artful Stitches">
         <div className="flex flex-col space-y-6 pt-2">
           {user?.role === 'admin' && (
             <Link
@@ -287,7 +279,11 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
 
           <div className="flex flex-col space-y-2">
             {navLinks.map((link) => {
-              const isActive = location.pathname === link.href;
+              const isActive =
+                location.pathname === link.href ||
+                (link.href === '/shop' && location.pathname.startsWith('/shop')) ||
+                (link.href === '/categories' && location.pathname.startsWith('/categories')) ||
+                (link.href === '/about' && location.pathname.startsWith('/about'));
               return link.href.startsWith('/#') ? (
                 <a
                   key={link.name}
@@ -316,20 +312,30 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
           <hr className="border-beige" />
 
           <div className="flex flex-col space-y-3">
-            <Link to="/shop" onClick={() => setMobileMenuOpen(false)}>
+            <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="default" className="w-full justify-center gap-2 bg-sage hover:bg-sage-dark text-cream">
                 <ShoppingBag className="w-4 h-4" /> View Cart ({cartCount})
               </Button>
             </Link>
 
             {isAuthenticated ? (
-              <button
-                onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-terracotta text-terracotta text-sm font-medium hover:bg-terracotta hover:text-cream transition-all duration-200"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign Out ({user?.name?.split(' ')[0]})
-              </button>
+              <>
+                <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full justify-center gap-2 border-sage text-sage-dark hover:bg-sage hover:text-cream">
+                    <User className="w-4 h-4" /> My Profile, Wishlist & Orders
+                  </Button>
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-terracotta text-terracotta text-sm font-medium hover:bg-terracotta hover:text-cream transition-all duration-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out ({user?.name?.split(' ')[0]})
+                </button>
+              </>
             ) : (
               <>
                 <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
@@ -355,3 +361,5 @@ export const Navbar = ({ cartCount = 3, wishlistCount = 2, onSearchClick }) => {
     </>
   );
 };
+
+export default Navbar;

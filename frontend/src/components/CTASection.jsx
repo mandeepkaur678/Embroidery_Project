@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from './ui/Button';
 import { ShoppingBag, Sparkles, Heart } from 'lucide-react';
 
@@ -39,30 +40,26 @@ export const CTASection = () => {
 
             {/* CTA Button */}
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="w-full sm:w-auto bg-sage hover:bg-sage-dark text-white font-semibold shadow-xl group px-8"
-                onClick={() => {
-                  const element = document.getElementById('collections');
-                  element?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                <ShoppingBag className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
-                <span>Shop Now</span>
-              </Button>
+              <Link to="/shop" className="w-full sm:w-auto">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="w-full sm:w-auto bg-sage hover:bg-sage-dark text-white font-semibold shadow-xl group px-8"
+                >
+                  <ShoppingBag className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
+                  <span>Shop Now</span>
+                </Button>
+              </Link>
 
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto border-cream/50 text-cream hover:bg-cream hover:text-[#6B4F3A] font-medium"
-                onClick={() => {
-                  const element = document.getElementById('about');
-                  element?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Read Our Story
-              </Button>
+              <Link to="/about" className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full sm:w-auto border-cream/50 text-cream hover:bg-cream hover:text-[#6B4F3A] font-medium"
+                >
+                  Learn More
+                </Button>
+              </Link>
             </div>
 
             {/* Bottom Guarantee Note */}

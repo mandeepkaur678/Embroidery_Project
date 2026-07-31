@@ -14,6 +14,11 @@ export const productSchema = yup.object().shape({
     .typeError('Price must be a valid number')
     .required('Price is required')
     .positive('Price must be greater than 0'),
+  discountPrice: yup
+    .number()
+    .typeError('Discount price must be a valid number')
+    .nullable()
+    .transform((value, originalValue) => (originalValue === '' ? null : value)),
   originalPrice: yup
     .number()
     .typeError('Original price must be a valid number')
@@ -25,7 +30,7 @@ export const productSchema = yup.object().shape({
   imageUrl: yup
     .string()
     .url('Must be a valid image URL')
-    .required('Image URL is required'),
+    .optional(),
   stock: yup
     .number()
     .typeError('Stock must be a valid number')
@@ -38,6 +43,12 @@ export const productSchema = yup.object().shape({
     .string()
     .optional(),
   colors: yup
+    .string()
+    .optional(),
+  featured: yup
+    .boolean()
+    .optional(),
+  status: yup
     .string()
     .optional(),
 });

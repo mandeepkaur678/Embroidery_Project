@@ -10,7 +10,7 @@ const collections = [
     tagline: "Botanical & Meadow Art",
     description: "Delicate flowers, wildflowers, and botanical leaves stitched with vibrant natural silk & cotton threads.",
     itemCount: "24 Items",
-    image: "https://images.unsplash.com/photo-1528458876861-544fd1761a91?auto=format&fit=crop&w=800&q=80",
+    image: "./src/assets/image4.jpg",
     alt: "Floral embroidery hoop with wildflowers and botanical patterns"
   },
   {
@@ -19,7 +19,7 @@ const collections = [
     tagline: "Heritage & Folk Techniques",
     description: "Time-honored stitching patterns and cultural motifs crafted with precision and deep artistic care.",
     itemCount: "18 Items",
-    image: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80",
+    image: "./src/assets/image5.jpg",
     alt: "Traditional hand embroidered fabric with heritage geometric pattern"
   },
   {
@@ -28,7 +28,7 @@ const collections = [
     tagline: "Contemporary Wall & Wearable Art",
     description: "Minimalist line art, abstract shapes, and modern aesthetic hoops designed for contemporary spaces.",
     itemCount: "32 Items",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
+    image: "./src/assets/modernembroidery.jpg",
     alt: "Modern aesthetic hoop embroidery with minimalist botanical frame"
   }
 ];
@@ -103,9 +103,9 @@ export const CollectionSection = ({ onSelectCollection }) => {
                 <Button
                   variant="secondary"
                   className="w-full justify-center group-hover:bg-mocha group-hover:text-cream transition-colors duration-300"
-                  onClick={() => onSelectCollection?.(item.name)}
+                  onClick={() => window.location.assign('/shop')}
                 >
-                  <span>Explore Collection</span>
+                  <span>Shop Now</span>
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>

@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken } from '../utils/generateToken.js';
+import { convertBase64ToWebP } from '../utils/imageConverter.js';
 
 /**
  * @desc    Register a new user
@@ -43,13 +44,21 @@ const registerUser = async (req, res) => {
     //hash password
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user (password will be hashed via pre-save hook in User model)
+    // Convert profile image to WebP format if provided as base64
+    let formattedProfileImage = profileImage || '';
+    if (formattedProfileImage) {
+      formattedProfileImage = await convertBase64ToWebP(formattedProfileImage, 'profile');
+    }
+
+    // SECURITY: Always create with role='user'. Never trust req.body.role.
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       phone: phone || '',
-      profileImage: profileImage || '',
+      profileImage: formattedProfileImage,
+      role: 'user',   // <-- hardcoded, ignores any role sent by frontend
+      isActive: true,
     });
 
 
@@ -112,8 +121,22 @@ const loginUser = async (req, res) => {
     // Explicitly select password field since schema sets select: false
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
+    }
 
-    if (user && (await user.matchPassword(password))) {
+    // Check if account is active
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been deactivated. Please contact support.',
+      });
+    }
+
+    if (await user.matchPassword(password)) {
       const accessToken = generateAccessToken(user._id, user.role);
       const refreshToken = generateRefreshToken(user._id);
 
@@ -233,7 +256,10 @@ const updateUserProfile = async (req, res) => {
     if (user) {
       user.name = req.body.name || user.name;
       user.phone = req.body.phone !== undefined ? req.body.phone : user.phone;
-      user.profileImage = req.body.profileImage !== undefined ? req.body.profileImage : user.profileImage;
+
+      if (req.body.profileImage !== undefined) {
+        user.profileImage = await convertBase64ToWebP(req.body.profileImage, 'profile');
+      }
 
       // Update password if provided
       if (req.body.password) {
@@ -496,6 +522,61 @@ const getUserById = async (req, res) => {
 };
 
 /**
+ * @desc    Activate or deactivate a user account (Admin only)
+ * @route   PUT /api/users/:id/status
+ * @access  Private/Admin
+ */
+const updateUserStatus = async (req, res) => {
+  try {
+    const { isActive } = req.body;
+
+    if (isActive === undefined || typeof isActive !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        message: "'isActive' field is required and must be a boolean (true or false)",
+      });
+    }
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Prevent admin from deactivating their own account
+    if (user._id.toString() === req.user._id.toString() && !isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Admin cannot deactivate their own account',
+      });
+    }
+
+    user.isActive = isActive;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `User account ${isActive ? 'activated' : 'deactivated'} successfully`,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error updating user status',
+    });
+  }
+};
+
+/**
  * @desc    Update user role (Admin only)
  * @route   PUT /api/users/:id/role
  * @access  Private/Admin
@@ -513,21 +594,38 @@ const updateUserRole = async (req, res) => {
 
     const user = await User.findById(req.params.id);
 
-    if (user) {
-      user.role = role;
-      const updatedUser = await user.save();
-
-      return res.status(200).json({
-        success: true,
-        message: 'User role updated successfully',
-        data: updatedUser,
-      });
-    } else {
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found',
       });
     }
+
+    // Prevent downgrading the last admin account
+    if (user.role === 'admin' && role === 'user') {
+      const adminCount = await User.countDocuments({ role: 'admin' });
+      if (adminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cannot remove the last admin account. Create another admin first.',
+        });
+      }
+    }
+
+    user.role = role;
+    const updatedUser = await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'User role updated successfully',
+      data: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        isActive: updatedUser.isActive,
+      },
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -535,6 +633,7 @@ const updateUserRole = async (req, res) => {
     });
   }
 };
+
 
 /**
  * @desc    Delete user (Admin only)
@@ -575,5 +674,5 @@ const deleteUser = async (req, res) => {
 };
 
 export {
-  registerUser, loginUser, refreshToken, getUserProfile, updateUserProfile, addUserAddress, updateUserAddress, deleteUserAddress, getUsers, getUserById, updateUserRole, deleteUser,
+  registerUser, loginUser, refreshToken, getUserProfile, updateUserProfile, addUserAddress, updateUserAddress, deleteUserAddress, getUsers, getUserById, updateUserStatus, updateUserRole, deleteUser,
 };

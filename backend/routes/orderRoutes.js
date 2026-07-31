@@ -6,6 +6,7 @@ import {
   cancelOrder,
   getAllOrders,
   updateOrderStatus,
+  deleteOrder,
 } from '../controllers/orderController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { admin } from '../middleware/adminMiddleware.js';
@@ -22,13 +23,11 @@ const router = express.Router();
 // ==========================================
 
 /**
- * @route   POST /api/orders - Create new COD order from cart
- * @route   GET /api/orders - Get all orders across all users (Admin)
+ * @route   POST /api/orders
+ * @desc    Create new COD order from cart
+ * @access  Private (Customer)
  */
-router
-  .route('/')
-  .post(protect, validateCreateOrderInput, createOrder)
-  .get(protect, admin, getAllOrders);
+router.post('/', protect, validateCreateOrderInput, createOrder);
 
 /**
  * @route   GET /api/orders/my-orders
@@ -36,6 +35,55 @@ router
  * @access  Private (Customer)
  */
 router.get('/my-orders', protect, getMyOrders);
+
+// ==========================================
+// Admin Order Routes (Protected/Admin)
+// ==========================================
+
+/**
+ * @route   GET /api/orders
+ * @desc    Get all orders across all users
+ * @access  Private/Admin
+ */
+router.get('/', protect, admin, getAllOrders);
+
+/**
+ * @route   GET /api/orders/admin/all
+ * @desc    Get all orders across all users (Alias)
+ * @access  Private/Admin
+ */
+router.get('/admin/all', protect, admin, getAllOrders);
+
+/**
+ * @route   PUT /api/orders/:id/status
+ * @desc    Update order status (Admin only)
+ * @access  Private/Admin
+ */
+router.put(
+  '/:id/status',
+  protect,
+  admin,
+  validateOrderId,
+  validateOrderStatusInput,
+  updateOrderStatus
+);
+
+/**
+ * @route   DELETE /api/orders/:id
+ * @desc    Delete order (Admin only)
+ * @access  Private/Admin
+ */
+router.delete(
+  '/:id',
+  protect,
+  admin,
+  validateOrderId,
+  deleteOrder
+);
+
+// ==========================================
+// Shared Routes (Owner or Admin access)
+// ==========================================
 
 /**
  * @route   GET /api/orders/:id
@@ -50,23 +98,5 @@ router.get('/:id', protect, validateOrderId, getOrderById);
  * @access  Private (Customer)
  */
 router.put('/:id/cancel', protect, validateOrderId, cancelOrder);
-
-// ==========================================
-// Admin Order Routes (Protected/Admin)
-// ==========================================
-
-/**
- * @route   PUT /api/orders/:id/status
- * @desc    Update order status and auto-mark payment as Paid on Delivery
- * @access  Private/Admin
- */
-router.put(
-  '/:id/status',
-  protect,
-  admin,
-  validateOrderId,
-  validateOrderStatusInput,
-  updateOrderStatus
-);
 
 export default router;

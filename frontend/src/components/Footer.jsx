@@ -85,8 +85,8 @@ export const Footer = () => {
                 { name: 'Home', path: '/' },
                 { name: 'Shop Collection', path: '/shop' },
                 { name: 'Categories', path: '/#services' },
-                { name: 'About Us', path: '/#story' },
-                { name: 'Contact', path: '/#contact' },
+                { name: 'About Us', path: '/about' },
+                { name: 'Contact', path: '/contact' },
               ].map((link) => (
                 <li key={link.name}>
                   <NavLink

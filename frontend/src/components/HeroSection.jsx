@@ -44,17 +44,17 @@ export const HeroSection = () => {
 
               {/* CTA Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto">
-                <a href="#products" className="w-full sm:w-auto">
+                <a href="/shop" className="w-full sm:w-auto">
                   <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-warm-md hover:scale-102">
-                    <span>Explore Collection</span>
+                    <span>Shop Now</span>
                     <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </a>
 
-                <a href="#story" className="w-full sm:w-auto group ">
+                <a href="/about" className="w-full sm:w-auto group ">
                   <Button variant="outlineTerracotta" size="lg" className="w-full sm:w-auto">
                     <Compass className="w-4 h-4 mr-1.5 text-terracotta group-hover:text-white transition-all duration-200" />
-                    <span>Discover Our Story</span>
+                    <span>Learn More</span>
                   </Button>
                 </a>
               </div>

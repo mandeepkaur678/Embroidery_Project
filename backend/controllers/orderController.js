@@ -112,6 +112,7 @@ const createOrder = async (req, res) => {
       success: true,
       message: 'Order created successfully',
       order,
+      data: order,
     });
   } catch (error) {
     console.error('Create Order Error:', error);
@@ -138,6 +139,7 @@ const getMyOrders = async (req, res) => {
       success: true,
       count: orders.length,
       orders,
+      data: orders,
     });
   } catch (error) {
     console.error('Get My Orders Error:', error);
@@ -176,7 +178,7 @@ const getOrderById = async (req, res) => {
     }
 
     // Ensure user can only view their own order (unless admin)
-    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isOwner = order.user && order.user._id.toString() === req.user._id.toString();
     const isAdmin = req.user.role === 'admin';
 
     if (!isOwner && !isAdmin) {
@@ -189,6 +191,7 @@ const getOrderById = async (req, res) => {
     return res.status(200).json({
       success: true,
       order,
+      data: order,
     });
   } catch (error) {
     console.error('Get Order By ID Error:', error);
@@ -247,6 +250,7 @@ const cancelOrder = async (req, res) => {
       success: true,
       message: 'Order cancelled successfully',
       order,
+      data: order,
     });
   } catch (error) {
     console.error('Cancel Order Error:', error);
@@ -273,6 +277,7 @@ const getAllOrders = async (req, res) => {
       success: true,
       count: orders.length,
       orders,
+      data: orders,
     });
   } catch (error) {
     console.error('Get All Orders Error:', error);
@@ -291,7 +296,8 @@ const getAllOrders = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { orderStatus } = req.body;
+    const { orderStatus, status } = req.body;
+    const newStatus = orderStatus || status;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -302,7 +308,7 @@ const updateOrderStatus = async (req, res) => {
 
     const validStatuses = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
-    if (!orderStatus || !validStatuses.includes(orderStatus)) {
+    if (!newStatus || !validStatuses.includes(newStatus)) {
       return res.status(400).json({
         success: false,
         message: `Invalid order status. Allowed values: ${validStatuses.join(', ')}`,
@@ -318,10 +324,10 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
-    order.orderStatus = orderStatus;
+    order.orderStatus = newStatus;
 
     // Automatically set paymentStatus = 'Paid' when order is delivered for COD
-    if (orderStatus === 'Delivered') {
+    if (newStatus === 'Delivered') {
       order.paymentStatus = 'Paid';
     }
 
@@ -331,12 +337,53 @@ const updateOrderStatus = async (req, res) => {
       success: true,
       message: 'Order status updated successfully',
       order,
+      data: order,
     });
   } catch (error) {
     console.error('Update Order Status Error:', error);
     return res.status(500).json({
       success: false,
       message: error.message || 'Server error updating order status',
+    });
+  }
+};
+
+/**
+ * @desc    Delete an order by ID (Admin only)
+ * @route   DELETE /api/orders/:id
+ * @access  Private/Admin
+ */
+const deleteOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid Order ID format',
+      });
+    }
+
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found',
+      });
+    }
+
+    await order.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Order deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete Order Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error deleting order',
     });
   }
 };
@@ -348,4 +395,5 @@ export {
   cancelOrder,
   getAllOrders,
   updateOrderStatus,
+  deleteOrder,
 };

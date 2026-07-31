@@ -1,7 +1,6 @@
 
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BadgeCheck, Compass, Flower2, Heart, Leaf, Palette, Sparkles, Star, Scissors, Gem, HandHeart, Shirt, Home, Briefcase, PenTool, MessageCircleHeart } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Compass, Flower2, Heart, Leaf, Palette, Sparkles, Scissors, Gem, PenTool, MessageCircleHeart } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 const sectionShell = 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8';
@@ -26,13 +25,13 @@ export const AboutHero = ({ eyebrow, title, description, primaryHref, secondaryH
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link to={primaryHref}>
                 <Button variant="default" size="lg" className="w-full sm:w-auto">
-                  Explore Our Collection
+                  Shop Now
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link to={secondaryHref}>
                 <Button variant="outline" size="lg" className="w-full sm:w-auto border-sage/50 text-sage-dark hover:bg-sage/10">
-                  Discover Our Story
+                  Learn More
                 </Button>
               </Link>
             </div>
@@ -183,7 +182,7 @@ export const CollectionsPreview = ({ collections }) => {
                 <h3 className="text-xl font-semibold text-earth">{item.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-charcoal/70">{item.description}</p>
                 <Link to={item.href} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-terracotta transition hover:gap-3">
-                  Explore Collection
+                  Shop Now
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

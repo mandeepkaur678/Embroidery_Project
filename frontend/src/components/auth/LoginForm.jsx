@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,31 +15,55 @@ export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(loginSchema),
     mode: 'onSubmit',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
+
+  // Reset form inputs completely when component mounts or on navigation
+  useEffect(() => {
+    reset({ email: '', password: '' });
+    if (isAuthenticated) {
+      if (user?.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        navigate('/profile', { replace: true });
+      }
+    }
+  }, [reset, isAuthenticated, user, navigate]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const user = await login({ email: data.email, password: data.password });
-      toast.success(`Welcome back, ${user.name}!`, {
-        description: user.role === 'admin'
-          ? 'Signed in as Artful Stitches Admin.'
-          : 'You have successfully signed in to Artful Stitches.',
+      const loggedUser = await login({ email: data.email, password: data.password });
+
+      // Make login page empty on successful login
+      reset({ email: '', password: '' });
+
+      toast.success(`Welcome back, ${loggedUser.name}!`, {
+        description:
+          loggedUser.role === 'admin'
+            ? 'Signed in as Artful Stitches Admin.'
+            : 'You have successfully signed in to Artful Stitches.',
       });
 
-      if (user?.role === 'admin') {
+      if (loggedUser?.role === 'admin') {
         navigate('/admin/dashboard');
+        window.location.reload();
       } else {
-        navigate('/');
+        navigate('/profile');
+        window.location.reload();
       }
     } catch (err) {
       toast.error(err.message || 'Login failed. Please check your credentials.', {
@@ -75,10 +99,11 @@ export const LoginForm = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate autoComplete="off">
         <AuthInput
           id="email"
           label="Email Address"
+          autoComplete="off"
           type="email"
           placeholder="Enter your email address"
           icon={Mail}
@@ -89,6 +114,7 @@ export const LoginForm = () => {
         <PasswordInput
           id="password"
           label="Password"
+          autoComplete="new-password"
           placeholder="Enter your password"
           error={errors.password?.message}
           {...register('password')}
