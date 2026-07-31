@@ -187,7 +187,7 @@ export const AddProduct = () => {
               <select {...register('category')} className={inputClass}>
                 <option value="">Select a category</option>
                 {categories.map((c) => (
-                  <option key={c._id ?? c} value={c._id ?? c}>
+                  <option key={c._id ?? c} value={c.name || c}>
                     {c.name || c}
                   </option>
                 ))}

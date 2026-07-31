@@ -17,11 +17,13 @@ const getAuthHeaders = () => {
 
 
 let localCategories = [
-  { _id: 'cat_1', name: 'Embroidered Clothing', description: 'Kurta, dupattas, scarves, and dresses', image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=600', isActive: true },
-  { _id: 'cat_2', name: 'Home Decor', description: 'Hoop art, cushion covers, and tapestries', image: 'https://images.unsplash.com/photo-1528458909336-e7a0adfac1d5?auto=format&fit=crop&q=80&w=600', isActive: true },
-  { _id: 'cat_3', name: 'Bags & Pouches', description: 'Canvas totes, pouches, and clutch bags', image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=600', isActive: true },
-  { _id: 'cat_4', name: 'Accessories', description: 'Bookmarks, scrunchies, and hairpins', image: 'https://images.unsplash.com/photo-1606760227091-3dd858d97218?auto=format&fit=crop&q=80&w=600', isActive: true },
-  { _id: 'cat_5', name: 'Custom Embroidery', description: 'Personalized portraits and family keepsakes', image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_1', name: 'Traditional Designs', description: 'Classic traditional embroidery designs', image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_2', name: 'Heritage & Folk', description: 'Heritage and folk art embroidery', image: 'https://images.unsplash.com/photo-1528458909336-e7a0adfac1d5?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_3', name: 'Floral Embroidery', description: 'Floral and botanical embroidery patterns', image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_4', name: 'Embroidered Bags', description: 'Canvas totes, pouches, and clutch bags', image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_5', name: 'Home Decor', description: 'Hoop art, cushion covers, and tapestries', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_6', name: 'Clothing & Accessories', description: 'Kurtas, scarves, scrunchies, and accessories', image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&q=80&w=600', isActive: true },
+  { _id: 'cat_7', name: 'Custom Embroidery', description: 'Personalized portraits and family keepsakes', image: 'https://images.unsplash.com/photo-1606760227091-3dd858d97218?auto=format&fit=crop&q=80&w=600', isActive: true },
 ];
 
 let localUsers = [

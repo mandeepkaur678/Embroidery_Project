@@ -4,7 +4,6 @@
  */
 
 export const MOCK_CATEGORIES = [
-
   'All Products',
   'Traditional Designs',
   'Heritage & Folk',
@@ -12,8 +11,7 @@ export const MOCK_CATEGORIES = [
   'Embroidered Bags',
   'Home Decor',
   'Clothing & Accessories',
-  'Custom Embroidery'
-
+  'Custom Embroidery',
 ];
 
 export const MOCK_COLORS = [
